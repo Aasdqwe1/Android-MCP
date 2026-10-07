@@ -1,6 +1,5 @@
 
 !app/src/main/assets/proot-runtime/debian-trixie-aarch64-pd-v4.29.0.tar.xz
-!ci-debug.keystore
 !gradle/wrapper/gradle-wrapper.properties   # 保留版本信息
 !gradlew
 !gradlew.bat
@@ -32,9 +31,12 @@
 *.ipr
 *.iws
 *.jar
-!gradle/wrapper/gradle-wrapper.jar          # Gradle Wrapper 入口（CI 必需，放在 *.jar 之后才能生效）
+# Gradle Wrapper 入口（CI 必需）
+!gradle/wrapper/gradle-wrapper.jar
 *.jks
 *.keystore
+# CI 调试签名（必须提交，路径相对仓库根）
+!app/ci-debug.keystore
 *.lock
 *.log
 *.tar.gz
