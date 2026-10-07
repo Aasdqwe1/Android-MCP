@@ -1,0 +1,4 @@
+# SMB 技能的系统依赖：smbclient 用于客户端访问，samba 提供 smbd 服务端。
+# 每行一个 apt 包名；由 SkillManager.installSkillDependencies 在 PRoot 就绪后幂等安装。
+smbclient
+samba

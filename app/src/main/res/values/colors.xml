@@ -1,0 +1,12 @@
+<resources>
+    <!-- 配色集中在此，便于后续扩展 -->
+    <!-- 日志文字与标签色（浅色主题） -->
+    <color name="log_text">#1C1B1F</color>
+    <color name="log_debug">#9AA0A6</color>
+    <color name="log_info">#5B9BD5</color>
+    <color name="log_warn">#B26A00</color>
+    <color name="log_error">#D32F2F</color>
+    
+    <!-- MCP 主题色 -->
+    <color name="mcp_color_surface">#F5F5F5</color>
+</resources>

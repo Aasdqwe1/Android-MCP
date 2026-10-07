@@ -1,0 +1,8 @@
+# 技能脚本的换行必须是 LF。
+#
+# 原因：技能脚本会以 `bash -s 'arg' <<'SCRIPT_EOF' <脚本体>` 的形式交给 bash，
+# 也会被技能文档指引在 PRoot 里手工执行（如 `bash scripts/greet.sh 世界 zh`）。
+# CRLF 会让每行末尾多一个 \r，bash 直接报 syntax error（实测 exit=2，整条技能工具全废）。
+# 宿主读取脚本时另有归一化兜底（SkillScriptSource），但仓库里保持 LF 才是根治。
+app/src/main/assets/skills/**/*.sh text eol=lf
+app/src/main/assets/skills/**/*.py text eol=lf

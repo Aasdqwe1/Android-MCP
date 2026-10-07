@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 浏览器浮窗卡片（长按会话窗口的浏览器入口弹出）。
+     结构：顶部把手条（整条可拖拽）+ 标题 + 「回全屏 / 关闭」按钮；下方 FloatTouchFrameLayout 是
+     WebBrowser 的 WebView 挂载点（全屏 ⇄ 浮窗会先摘后挂地把 WebView 搬进来）。
+     圆角/阴影由 MaterialCardView 提供，WebView 由 outline 裁剪到圆角内。 -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="10dp"
+    app:cardPreventCornerOverlap="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 拖拽把手条：整条都能拖，末端是操作按钮 -->
+        <LinearLayout
+            android:id="@+id/floatTitleBar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="2dp">
+
+            <View
+                android:layout_width="28dp"
+                android:layout_height="4dp"
+                android:background="@drawable/bg_float_handle" />
+
+            <TextView
+                android:id="@+id/floatTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/float_browser_title"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/floatBtnExpand"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/float_browser_expand"
+                app:icon="@drawable/ic_float_expand"
+                app:iconTint="?attr/colorOnSurfaceVariant" />
+
+            <!-- 缩小为悬浮球 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/floatBtnMinimize"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/float_browser_minimize"
+                app:icon="@drawable/ic_float_minimize"
+                app:iconTint="?attr/colorOnSurfaceVariant" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/floatBtnClose"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/float_browser_close"
+                app:icon="@drawable/ic_float_close"
+                app:iconTint="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+        <!-- 内容区 + 右下角缩放手柄叠放 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.mcp.floatwin.FloatTouchFrameLayout
+                android:id="@+id/floatWebHost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!-- 右下角缩放手柄：拖动改变浮窗大小（不影响网页滚动） -->
+            <View
+                android:id="@+id/floatResizeHandle"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="end|bottom"
+                android:background="@drawable/bg_float_resize_handle"
+                android:contentDescription="@string/float_browser_resize" />
+        </FrameLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,8 @@
+<resources>
+    <!-- 日志文字与标签色（深色主题）：在深色背景上改用更亮的字色，确保可读 -->
+    <color name="log_text">#ECE6F5</color>
+    <color name="log_debug">#9AA0A6</color>
+    <color name="log_info">#82B1FF</color>
+    <color name="log_warn">#FFB300</color>
+    <color name="log_error">#FF6E6E</color>
+</resources>

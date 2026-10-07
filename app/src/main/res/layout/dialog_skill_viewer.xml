@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:clipChildren="true"
+    android:clipToPadding="true"
+    android:orientation="vertical">
+
+    <!-- 拖拽手柄：只做视觉提示，本身不接管触摸 -->
+    <View
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:background="?attr/colorOutlineVariant" />
+
+    <!--
+        标题行（同时也是 BottomSheet 的拖拽把手：只有这里才能拖动/收起）。
+
+        边距统一为「左右 20dp、上 12dp」：
+        - 之前 paddingEnd 只有 8dp，标题左缩进 20dp、右侧按钮贴边 8dp，看起来是歪的；
+        - 现在左右都是 20dp，与下方文件名行、正文区（CSS padding 20px）对齐成一条线。
+        「关闭」按钮自身还带 12dp 水平内边距，所以视觉右边界仍收在 20dp 附近。
+    -->
+    <LinearLayout
+        android:id="@+id/viewerHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="20dp">
+
+        <TextView
+            android:id="@+id/tvViewerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvViewerVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="?attr/colorSurfaceVariant"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="10sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewerClose"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="关闭"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- 文件名行：与标题行同一条左起线（20dp） -->
+    <TextView
+        android:id="@+id/tvViewerFiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingStart="20dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="12dp"
+        android:textColor="?attr/colorOutline"
+        android:textSize="11sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorOutlineVariant" />
+
+    <!-- Markdown 渲染区 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!--
+            内容区高度交给 FrameLayout 的 weight=1：BottomSheet 从 COLLAPSED
+            拖到 HALF / EXPANDED 时父容器重新测量，WebView 自动跟着长高。
+            背景 = colorSurface（不透明），不设成透明，否则 WebView 没画到的
+            区域会透出下层的技能列表，看起来像「弹窗是半透明的」。
+        -->
+        <WebView
+            android:id="@+id/wvViewerContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorSurface"
+            android:fillViewport="true" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressViewer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:indeterminate="true" />
+    </FrameLayout>
+</LinearLayout>

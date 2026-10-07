@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    单输入框弹窗（重命名 / 添加待办 / 新建配置共用）。
+
+    用 TextInputLayout 的浮动标签，而不是裸 EditText + hint ——
+    后者在 Material3 对话框里样式脱节，且 hint 会在输入时消失、失去上下文。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/dialog_padding_horizontal"
+    android:paddingTop="@dimen/dialog_padding_vertical"
+    android:paddingEnd="@dimen/dialog_padding_horizontal"
+    android:paddingBottom="@dimen/dialog_padding_vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPrompt"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPrompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

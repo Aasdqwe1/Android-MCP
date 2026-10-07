@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Material 3 Expressive（配合 Android 16 时代的设计语言，material 1.14.0+）：
+         动态色彩、弹性动效、大圆角组件（按钮/FAB/底栏自动获得 Expressive 形态）。
+         DayNight 保持深浅色跟随系统；NoActionBar 维持自绘标题栏结构不变。 -->
+    <style name="Theme.AgentToolbox" parent="Theme.Material3Expressive.DayNight.NoActionBar">
+    </style>
+</resources>

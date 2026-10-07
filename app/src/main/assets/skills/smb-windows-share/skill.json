@@ -1,0 +1,117 @@
+{
+  "name": "smb-windows-share",
+  "description": "在 Android（Debian PRoot）上通过 SMB/CIFS 访问 Windows 网络文件共享：列出共享、浏览目录、下载/上传文件、查看空间占用。底层使用用户态 smbclient，无需 root、无需把共享挂载成系统目录（PRoot 环境无法挂载 cifs 文件系统，但可直接在协议层用 smbclient 传输文件）。适合把 Windows 电脑的共享文件夹当作远程文件系统进行读写。使用前请确保 Windows 端已开启「文件和打印机共享」并在防火墙放行 445 端口。",
+  "version": "1.0.0",
+  "author": "AgentToolbox",
+  "scripts": [
+    {
+      "name": "list_shares",
+      "description": "列出某台 Windows 主机上所有可访问的网络共享（共享名、类型、备注），用于发现共享名。",
+      "entry": "scripts/list_shares.sh",
+      "interpreter": "bash",
+      "params": [
+        {"name":"host","type":"string","description":"Windows 主机 IP 或主机名，如 192.168.1.100","required":true},
+        {"name":"user","type":"string","description":"用户名；留空表示匿名/访客访问","required":false},
+        {"name":"password","type":"string","description":"密码；匿名访问留空","required":false},
+        {"name":"workgroup","type":"string","description":"工作组/域，默认 WORKGROUP","required":false},
+        {"name":"port","type":"string","description":"SMB 端口，默认 445","required":false}
+      ]
+    },
+    {
+      "name": "list_files",
+      "description": "列出 Windows 共享中某个目录下的文件和子目录（相当于 ls）。",
+      "entry": "scripts/list_files.sh",
+      "interpreter": "bash",
+      "params": [
+        {"name":"host","type":"string","description":"Windows 主机 IP 或主机名","required":true},
+        {"name":"share","type":"string","description":"共享名，如 Documents","required":true},
+        {"name":"user","type":"string","description":"用户名；留空表示匿名","required":false},
+        {"name":"password","type":"string","description":"密码；匿名留空","required":false},
+        {"name":"remote_path","type":"string","description":"共享内的目录路径，默认根目录","required":false},
+        {"name":"workgroup","type":"string","description":"工作组/域，默认 WORKGROUP","required":false},
+        {"name":"port","type":"string","description":"SMB 端口，默认 445","required":false}
+      ]
+    },
+    {
+      "name": "download",
+      "description": "从 Windows 共享下载一个文件到本机（PRoot 工作目录），相当于 smbclient get。",
+      "entry": "scripts/download.sh",
+      "interpreter": "bash",
+      "timeout": 600,
+      "params": [
+        {"name":"host","type":"string","description":"Windows 主机 IP 或主机名","required":true},
+        {"name":"share","type":"string","description":"共享名","required":true},
+        {"name":"user","type":"string","description":"用户名；留空表示匿名","required":false},
+        {"name":"password","type":"string","description":"密码；匿名留空","required":false},
+        {"name":"remote_file","type":"string","description":"共享内的文件路径，如 photos/cat.jpg","required":true},
+        {"name":"local_path","type":"string","description":"本机保存路径（PRoot 内），默认当前目录同名文件","required":false},
+        {"name":"workgroup","type":"string","description":"工作组/域，默认 WORKGROUP","required":false},
+        {"name":"port","type":"string","description":"SMB 端口，默认 445","required":false}
+      ]
+    },
+    {
+      "name": "upload",
+      "description": "上传本机（PRoot 内）文件到 Windows 共享，相当于 smbclient put。",
+      "entry": "scripts/upload.sh",
+      "interpreter": "bash",
+      "timeout": 600,
+      "params": [
+        {"name":"host","type":"string","description":"Windows 主机 IP 或主机名","required":true},
+        {"name":"share","type":"string","description":"共享名","required":true},
+        {"name":"user","type":"string","description":"用户名；留空表示匿名","required":false},
+        {"name":"password","type":"string","description":"密码；匿名留空","required":false},
+        {"name":"local_path","type":"string","description":"本机文件路径（PRoot 内）","required":true},
+        {"name":"remote_path","type":"string","description":"共享内的目标路径，默认根目录同名","required":false},
+        {"name":"workgroup","type":"string","description":"工作组/域，默认 WORKGROUP","required":false},
+        {"name":"port","type":"string","description":"SMB 端口，默认 445","required":false}
+      ]
+    },
+    {
+      "name": "space",
+      "description": "统计 Windows 共享中某个目录的空间占用（递归大小），相当于 smbclient du。",
+      "entry": "scripts/space.sh",
+      "interpreter": "bash",
+      "timeout": 600,
+      "params": [
+        {"name":"host","type":"string","description":"Windows 主机 IP 或主机名","required":true},
+        {"name":"share","type":"string","description":"共享名","required":true},
+        {"name":"user","type":"string","description":"用户名；留空表示匿名","required":false},
+        {"name":"password","type":"string","description":"密码；匿名留空","required":false},
+        {"name":"remote_path","type":"string","description":"要统计的目录，默认根目录","required":false},
+        {"name":"workgroup","type":"string","description":"工作组/域，默认 WORKGROUP","required":false},
+        {"name":"port","type":"string","description":"SMB 端口，默认 445","required":false}
+      ]
+    },
+    {
+      "name": "serve",
+      "description": "验证模式：在 Android（Debian PRoot）启动 SMB 服务端并自检（smbd，真实 SMB3），把本机目录共享出去，供本机或外部客户端（如 Windows 文件管理器）连接读写。默认匿名共享、绑定 0.0.0.0。注意：PRoot 命令结束后服务进程会被 --kill-on-exit 回收，本入口仅用于快速验证配置与连通性；如需服务跨命令常驻，请调用 serve_bg（后台常驻模式）。生产环境建议传 user/password 并限制防火墙。samba 未装时脚本会自动尝试 apt 安装。",
+      "entry": "scripts/serve.sh",
+      "interpreter": "bash",
+      "params": [
+        {"name":"share_path","type":"string","description":"要共享的本地目录（PRoot 内绝对路径），如 /storage/emulated/0/Work","required":true},
+        {"name":"share_name","type":"string","description":"共享名，默认 share","required":false},
+        {"name":"port","type":"string","description":"SMB 端口，默认 445（优先；无 root 绑不了时自动回退 8445）","required":false},
+        {"name":"bind_ip","type":"string","description":"绑定地址，默认 0.0.0.0（所有接口，便于外部连接）；127.0.0.1 仅本机","required":false},
+        {"name":"user","type":"string","description":"SMB 账户名；留空表示匿名访客","required":false},
+        {"name":"password","type":"string","description":"SMB 账户密码；匿名留空","required":false},
+        {"name":"persist","type":"string","description":"1=常驻模式（须经 run_bash_bg / serve_bg 后台任务承载，脚本前台等待，服务不中断）；0=验证模式（默认）","required":false}
+      ]
+    },
+    {
+      "name": "serve_bg",
+      "description": "常驻模式：后台启动 SMB 服务端（smbd，真实 SMB3）并保持运行，立即返回任务 ID（bg_ 开头）。服务由 run_bash_bg 常驻 PRoot 进程承载，无命令超时，可跨命令存活，直到调用 bash_task_kill 停止；用 bash_task_status / bash_task_logs 查看状态与日志。默认匿名共享、绑定 0.0.0.0，把 share_path 目录共享出去供本机或外部客户端（如 Windows 文件管理器）连接读写。samba 未装时脚本会自动 apt 安装；persist 参数必须传 1 以启用常驻等待。",
+      "entry": "scripts/serve.sh",
+      "interpreter": "bash",
+      "background": true,
+      "params": [
+        {"name":"share_path","type":"string","description":"要共享的本地目录（PRoot 内绝对路径），如 /storage/emulated/0/Work","required":true},
+        {"name":"share_name","type":"string","description":"共享名，默认 share","required":false},
+        {"name":"port","type":"string","description":"SMB 端口，默认 445（优先；无 root 绑不了时自动回退 8445）","required":false},
+        {"name":"bind_ip","type":"string","description":"绑定地址，默认 0.0.0.0（所有接口，便于外部连接）；127.0.0.1 仅本机","required":false},
+        {"name":"user","type":"string","description":"SMB 账户名；留空表示匿名访客","required":false},
+        {"name":"password","type":"string","description":"SMB 账户密码；匿名留空","required":false},
+        {"name":"persist","type":"string","description":"常驻标志，本工具**必须传 1**（脚本前台等待，进程不退服务不死；不传或传 0 脚本会立刻退出）","required":true}
+      ]
+    }
+  ]
+}

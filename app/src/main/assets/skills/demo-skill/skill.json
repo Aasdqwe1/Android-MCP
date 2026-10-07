@@ -1,0 +1,59 @@
+{
+  "name": "demo-skill",
+  "version": "1.0.0",
+  "description": "技能开发示例：演示 skill.json 全部字段与脚本绑定方式",
+  "author": "AgentToolbox",
+  "minApp": "1.0.1",
+  "requires": [],
+  "scripts": [
+    {
+      "name": "greet",
+      "description": "向指定对象问好，演示最简脚本（无参数/有参数）",
+      "entry": "scripts/greet.sh",
+      "interpreter": "bash",
+      "params": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "要问候的名字",
+          "required": true
+        },
+        {
+          "name": "lang",
+          "type": "string",
+          "description": "语言：zh（默认）/ en",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "sysinfo",
+      "description": "输出运行环境信息，演示 python3 解释器",
+      "entry": "scripts/sysinfo.py",
+      "interpreter": "python3",
+      "params": [],
+      "timeout": 30
+    },
+    {
+      "name": "count_files",
+      "description": "统计指定目录下的文件数量，演示整数参数与超时控制",
+      "entry": "scripts/count_files.sh",
+      "interpreter": "bash",
+      "timeout": 60,
+      "params": [
+        {
+          "name": "dir",
+          "type": "string",
+          "description": "要统计的目录（绝对路径）",
+          "required": true
+        },
+        {
+          "name": "max_depth",
+          "type": "integer",
+          "description": "递归深度，默认 1",
+          "required": false
+        }
+      ]
+    }
+  ]
+}

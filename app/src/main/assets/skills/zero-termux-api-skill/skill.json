@@ -1,0 +1,27 @@
+{
+  "name": "zero-termux-api",
+  "description": "在ZeroTermux中启动Flask API服务，通过HTTP远程执行命令",
+  "version": "1.0.0",
+  "author": "MCP Agent",
+  "scripts": [
+    {
+      "name": "start",
+      "description": "启动 Flask API 服务（后台常驻：立即返回 bg_ 任务 ID，服务跨命令存活；用 bash_task_status / bash_task_logs / bash_task_kill 管理）。",
+      "entry": "scripts/flask_api.py",
+      "interpreter": "python3",
+      "background": true,
+      "params": [
+        {"name": "port", "type": "string", "description": "监听端口（位置参数），默认 8765", "required": false}
+      ]
+    },
+    {
+      "name": "status",
+      "description": "检查 API 服务是否运行（curl /health）",
+      "entry": "scripts/status.sh",
+      "interpreter": "bash",
+      "params": [
+        {"name": "port", "type": "string", "description": "要检查的端口（位置参数），默认 8765，需与 start 传入的一致", "required": false}
+      ]
+    }
+  ]
+}

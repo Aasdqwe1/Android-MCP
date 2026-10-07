@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 内容区 -->
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/colorBackground">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <!-- 内嵌浏览器视图：默认隐藏，由会话窗口标题栏右侧按钮进入。
+         结构：页面区（FrameLayout）挂 WebView + 主页覆盖层（居中地址栏，仅主页可见）+
+         FAB + 操作菜单。顶部状态栏/底部底栏安全区由 MainActivity 动态 padding。
+         开发者工具（Eruda 抓包/调试）由 AI 通过 browser_devtools 工具开关，默认关闭不注入不抓包 -->
+    <FrameLayout
+        android:id="@+id/browser_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+
+        <!-- 页面区：WebView attach 至此（底层），主页覆盖层/FAB/操作菜单悬浮其上 -->
+        <FrameLayout
+            android:id="@+id/browser_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- 起始页（主页）容器：内容由 assets/browser_home.html 渲染（深色卡片式起始页），
+                 显示/隐藏由 updateBrowserHomeState 控制，WebView 由 MainActivity.ensureHomeWeb 懒创建。
+                 这里刻意不写 <WebView>：冷启动时在 inflate 阶段构造 WebView 会与系统恢复
+                 DialogFragment 的 WebView 工厂初始化撞车（见 MainActivity.onCreate 注释）。 -->
+            <FrameLayout
+                android:id="@+id/home_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#121018" />
+
+            <!-- 浏览器操作菜单：点击可拖动 FAB 展开/收起（后退/前进/刷新/窗口切换/开发者工具/起始页） -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/browser_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="96dp"
+                android:visibility="gone"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="160dp"
+                    android:orientation="vertical"
+                    android:paddingVertical="4dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu_back"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="后退"
+                        app:icon="@drawable/ic_back"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu_forward"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="前进"
+                        app:icon="@drawable/ic_forward"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu_reload"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="刷新"
+                        app:icon="@drawable/ic_refresh"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu_windows"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="窗口切换"
+                        app:icon="@drawable/ic_windows"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu_devtools"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="开发者工具"
+                        app:icon="@drawable/ic_console"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu_home"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="回到起始页"
+                        app:icon="@drawable/ic_home"
+                        app:iconGravity="textStart" />
+
+                    <!-- Web 自动化窗口：查看模型正在操作的页面（独立会话，不影响浏览） -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu_automation"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/browser_menu_automation"
+                        app:icon="@drawable/ic_float_expand"
+                        app:iconGravity="textStart" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 可拖动操作 FAB：点击展开/收起浏览器操作菜单（颜色跟随主题，浅色/深色自动适配） -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/browser_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="40dp"
+                android:contentDescription="浏览器操作"
+                android:src="@drawable/ic_windows" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <!-- 经典底部导航栏：全宽、贴合屏幕底部，纯 Material 风格（含图标 + 文字），无侧边/底部留缝 -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:elevation="8dp"
+        android:background="?attr/colorSurface"
+        app:itemRippleColor="@android:color/transparent"
+        app:itemIconTint="@color/bottom_nav_tint"
+        app:itemTextColor="@color/bottom_nav_tint"
+        app:menu="@menu/bottom_nav_menu" />
+
+</FrameLayout>

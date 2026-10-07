@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        放开到“可访问任意网络”：
+        - cleartextTrafficPermitted=true：允许 HTTP 明文，覆盖本地模型
+          （如 Ollama http://localhost:11434）、局域网 IP、各类开发/测试后端。
+        - 同时信任系统 CA 与用户安装的 CA：自签名证书、本地开发证书、抓包
+          证书（Charles/mitmproxy 安装到设备的 CA）均可用，HTTPS 任意主机可连。
+        - 不做证书固定（pin-set）：固定会限制只能连特定证书，与“任意网络”需求相悖。
+        注意：此配置对正式发布包同样生效，等于关闭了明文屏蔽与用户 CA 的保护，
+        仅适合开发/调试/自托管场景。若日后要收紧，可改为仅在 <debug-overrides>
+        内信任 user CA，并把 cleartextTrafficPermitted 收到具体 domain-config。
+    -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

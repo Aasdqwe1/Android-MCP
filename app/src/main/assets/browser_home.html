@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        body {
+            /* 深色背景，比纯黑更高级 */
+            background-color: #121018;
+            color: #f0edf8;
+            min-height: 100vh;
+            /* 垂直水平居中全部内容 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 36px;
+        }
+
+        .title {
+            font-size: 44px;
+            font-weight: 600;
+            color: #f7f5fc;
+            letter-spacing: 2px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 20px 22px;
+            background: #1c1927;
+            border: 1px solid #383349;
+            border-radius: 16px;
+            font-size: 18px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-input::placeholder {
+            color: #928ba8;
+        }
+        /* 聚焦输入框，边框发光 */
+        .search-input:focus {
+            border-color: #846aff;
+            box-shadow: 0 0 0 3px rgba(132,106,255,0.18);
+        }
+
+        .btn-go {
+            padding: 14px 52px;
+            border: 1px solid #383349;
+            background-color: transparent;
+            color: #e2dff0;
+            border-radius: 999px;
+            font-size: 19px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-go:hover {
+            background-color: #846aff;
+            border-color: #846aff;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(132,106,255,0.25);
+        }
+
+        /* 移动端补充：按下态替代 hover，并去掉点击高亮 */
+        .btn-go:active {
+            background-color: #846aff;
+            border-color: #846aff;
+            color: #fff;
+        }
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">浏览器</h1>
+        <input class="search-input" id="homeInput" placeholder="输入网址或搜索内容" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="btn-go" id="homeGo">前往</button>
+    </div>
+
+    <script>
+        // 起始页唯一的原生交互：把输入内容交给 Android 侧解析
+        // （McpHome 由 MainActivity.HomeBridge 注入；网址直接打开，其余当搜索词）
+        function submitHome() {
+            var el = document.getElementById('homeInput');
+            var v = el && el.value ? el.value.trim() : '';
+            if (!v) {
+                if (el) el.focus();
+                return;
+            }
+            if (window.McpHome && window.McpHome.go) window.McpHome.go(v);
+        }
+        document.getElementById('homeGo').addEventListener('click', submitHome);
+        document.getElementById('homeInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                submitHome();
+            }
+        });
+        // 进入起始页自动聚焦（拿不到焦点也无副作用，部分 ROM 需用户手势才允许弹输入法）
+        window.addEventListener('load', function () {
+            var el = document.getElementById('homeInput');
+            if (el) { try { el.focus(); } catch (err) { } }
+        });
+    </script>
+</body>
+</html>

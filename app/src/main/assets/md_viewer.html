@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="marked.min.js"></script>
+<script src="purify.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1a1a1a; --muted: #6b7280; --border: #e5e7eb;
+    --code-bg: #f6f8fa; --accent: #6750a4; --table-stripe: #fafafa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1b1f; --fg: #e6e1e5; --muted: #938f99; --border: #49454f;
+      --code-bg: #2b2930; --accent: #d0bcff; --table-stripe: #25232a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    /* 上边距与标题栏/文件名行留白呼应；左右 20px 与原生侧 20dp 对齐成一条线 */
+    margin: 0; padding: 16px 20px 32px;
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, "Noto Sans CJK SC", "PingFang SC", sans-serif;
+    font-size: 14px; line-height: 1.7; word-wrap: break-word;
+    -webkit-text-size-adjust: 100%;
+  }
+  h1, h2, h3, h4 { margin: 1.2em 0 0.6em; font-weight: 600; line-height: 1.35; }
+  h1 { font-size: 1.5em; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+  h2 { font-size: 1.3em; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.1em; }
+  h4 { font-size: 1em; }
+  p { margin: 0.7em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  ul, ol { padding-left: 1.6em; margin: 0.7em 0; }
+  li { margin: 0.25em 0; }
+  li > ul, li > ol { margin: 0.2em 0; }
+  blockquote {
+    margin: 0.8em 0; padding: 0.4em 1em;
+    border-left: 3px solid var(--accent);
+    background: var(--code-bg); color: var(--muted);
+    border-radius: 0 6px 6px 0;
+  }
+  code {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-size: 0.88em; background: var(--code-bg);
+    padding: 0.15em 0.4em; border-radius: 4px;
+  }
+  pre {
+    background: var(--code-bg); padding: 12px 14px;
+    border-radius: 8px; overflow-x: auto; margin: 0.9em 0;
+  }
+  pre code { background: none; padding: 0; font-size: 0.85em; line-height: 1.5; }
+  table {
+    border-collapse: collapse; width: 100%; margin: 0.9em 0;
+    font-size: 0.92em; display: block; overflow-x: auto;
+  }
+  th, td { border: 1px solid var(--border); padding: 7px 11px; text-align: left; }
+  th { background: var(--code-bg); font-weight: 600; }
+  tr:nth-child(even) td { background: var(--table-stripe); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5em 0; }
+  img { max-width: 100%; height: auto; border-radius: 6px; }
+  input[type="checkbox"] { margin-right: 6px; }
+  #content:empty::after {
+    content: "加载中…"; color: var(--muted); font-size: 13px;
+  }
+  /* 首个块级元素不额外撑开上边距，避免与 body 的 16px 叠加成 32px */
+  #content > :first-child { margin-top: 0; }
+</style>
+</head>
+<body>
+<div id="content"></div>
+<script>
+// 由原生侧通过 evaluateJavascript 调用：window.renderMarkdown(mdText)
+window.renderMarkdown = function (text) {
+  try {
+    var html = marked.parse(text, { breaks: true, gfm: true });
+    document.getElementById("content").innerHTML = DOMPurify.sanitize(html, {
+      ADD_ATTR: ["target"]
+    });
+  } catch (e) {
+    var d = document.getElementById("content");
+    d.textContent = text;
+    d.style.whiteSpace = "pre-wrap";
+  }
+  // 渲染后立即复检一次：内容不足一屏时不会再触发 scroll 事件。
+  if (window.__onViewerScroll) window.__onViewerScroll();
+};
+
+// 滚动到底回调：原生侧可设置 window.__onViewerScroll，由本页在滚动时调用。
+// 说明：WebView 内部滚动不会触发原生 View.setOnScrollChangeListener，
+// 因此「阅读到底」必须由页面侧监听并回调原生。
+(function () {
+  var lastY = 0;
+  function notify() {
+    if (typeof window.__onViewerScroll === "function") {
+      try { window.__onViewerScroll(); } catch (e) {}
+    }
+  }
+  window.addEventListener("scroll", function () {
+    var y = window.scrollY || document.documentElement.scrollTop || 0;
+    // 仅在滚动位置变化时通知，避免同一次滚动触发过多回调。
+    if (y !== lastY) { lastY = y; notify(); }
+  }, { passive: true });
+  document.addEventListener("scroll", function () {
+    var y = window.scrollY || document.documentElement.scrollTop || 0;
+    if (y !== lastY) { lastY = y; notify(); }
+  }, { passive: true, capture: true });
+})();
+</script>
+</body></html>

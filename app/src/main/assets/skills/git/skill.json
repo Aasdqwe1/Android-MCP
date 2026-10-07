@@ -1,0 +1,27 @@
+{
+  "name": "git",
+  "description": "Git 版本控制操作指南（通过 Debian PRoot Git + run_bash），并绑定仓库状态脚本工具",
+  "version": "2.1.0",
+  "scripts": [
+    {
+      "name": "repo_status",
+      "description": "查看指定 Git 仓库的状态、当前分支、最近提交；full 模式附加变更统计与远程同步状态",
+      "entry": "scripts/repo_status.sh",
+      "interpreter": "bash",
+      "params": [
+        {
+          "name": "repo_path",
+          "type": "string",
+          "description": "要检查的 Git 仓库路径（绝对路径）",
+          "required": true
+        },
+        {
+          "name": "detail",
+          "type": "string",
+          "description": "short=状态+分支+最近提交（默认）；full=再加 diff 统计与远程同步",
+          "required": false
+        }
+      ]
+    }
+  ]
+}

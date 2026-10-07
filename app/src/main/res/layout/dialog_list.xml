@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    列表选择弹窗（会话操作 / 窗口切换共用）。
+
+    标题在 XML 里固定，选项交给 RecyclerView ——
+    不用 AlertDialog 自带的 setItems：那套排版由系统决定，
+    深浅色、圆角、行高都和其他弹窗对不齐。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dialog_padding_vertical">
+
+    <TextView
+        android:id="@+id/tvListTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dialog_padding_horizontal"
+        android:paddingEnd="@dimen/dialog_padding_horizontal"
+        android:paddingBottom="@dimen/dialog_padding_vertical"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/dialog_title_size"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvDialogList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="@dimen/dialog_choice_list_max_height"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/dialog_padding_vertical"
+        android:scrollbars="vertical" />
+</LinearLayout>

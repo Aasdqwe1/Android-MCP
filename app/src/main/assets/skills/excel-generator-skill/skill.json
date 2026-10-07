@@ -1,0 +1,19 @@
+{
+  "name": "excel-generator-skill",
+  "description": "将结构化数据（JSON 数组）生成带样式的 Excel 表格：表头样式、隔行底色、类型推断、列宽自适应、数值列图表；单工作表，工作表名取自 title 参数。",
+  "version": "1.0.0",
+  "author": "MCP Agent",
+  "scripts": [
+    {
+      "name": "generate",
+      "description": "从JSON数据生成Excel文件，支持标题、列宽、样式自定义",
+      "entry": "scripts/excel_generator.py",
+      "interpreter": "python3",
+      "params": [
+        {"name": "data_json", "type": "string", "description": "JSON数组格式的数据", "required": true},
+        {"name": "output_path", "type": "string", "description": "输出Excel文件路径", "required": true},
+        {"name": "title", "type": "string", "description": "工作表标题（可选）", "required": false}
+      ]
+    }
+  ]
+}

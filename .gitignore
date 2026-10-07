@@ -1,0 +1,68 @@
+
+!app/src/main/assets/proot-runtime/debian-trixie-aarch64-pd-v4.29.0.tar.xz
+!ci-debug.keystore
+!gradle/wrapper/gradle-wrapper.properties   # 保留版本信息
+!gradlew
+!gradlew.bat
+# (ci-debug.keystore 已通过 !ci-debug.keystore 例外保留)
+# ========== CI 调试密钥 ==========
+# ========== Git 备份 ==========
+# ========== Gradle 缓存 ==========
+# ========== IDE 和编辑器 ==========
+# ========== Kotlin 编译器缓存 ==========
+# ========== 临时文件和目录（来自旧规则） ==========
+# ========== 压缩包（忽略临时下载，但保留 assets 内的资源） ==========
+# ========== 备份文件 ==========
+# ========== 本地配置 ==========
+# ========== 构建日志 ==========
+# ========== 构建输出 ==========
+# ========== 根目录下的预编译二进制（如有） ==========
+# ========== 根目录下载的证书（非项目资源） ==========
+# ========== 重复构建目录 ==========
+# 调试 keystore（必须提交到仓库供 CI 使用）
+**/build (1)/
+**/build/
+*.aar
+*.apk
+*.bak
+*.bak[0-9]
+*.class
+*.dex
+*.iml
+*.ipr
+*.iws
+*.jar
+*.jks
+*.keystore
+*.lock
+*.log
+*.tar.gz
+*.tar.xz                     # 默认忽略，但下面例外保留必需的 rootfs
+*.tmp
+*.zip
+.classpath
+.git.bak/
+.gitignore.bak
+.gradle/
+.idea/
+.kotlin/
+.project
+.settings/
+.vscode/
+/.android-user/
+/.gradle-user/
+/bash-arm64-android
+/configure.log
+/make*.zip
+/make-tmp/
+/make.log
+/server/data/                # 若有服务端数据目录
+app/src/main/assets/skills/demo-skill/scripts/__pycache__
+app/src/main/assets/skills/excel-generator-skill/scripts/__pycache__
+app/src/main/assets/skills/github-actions-skill/__pycache__
+app/src/main/assets/skills/github-actions-skill/scripts/__pycache__
+app/src/main/assets/skills/zero-termux-api-skill/scripts/__pycache__
+build_logs/
+cacert.pem
+local.properties
+out/

@@ -1,0 +1,183 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  # 允许在 Actions 页面手动触发（一键重跑，无需为触发而造空提交）
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: '是否发布到预发布（latest-build）'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+# 同一分支/PR 的多次触发只保留最新一次，取消旧运行，避免 Runner 堆积
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # 防止构建卡死长期占用资源
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          # 缓存 Gradle 依赖与 wrapper，避免每次运行重复下载（显著提速、降低限流风险）
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          # 覆盖 action 的默认值 'tools platform-tools'：
+          # `tools` 是 cmdline-tools 之前的独立包，早已从 SDK 仓库移除。
+          # 旧版 sdkmanager 对它只打 Warning 就继续（所以默认值长期侥幸可用），
+          # runner 镜像把 cmdline-tools 升到 16.0 后改为硬错误 exit 1：
+          #   Warning: Failed to find package 'tools'
+          #   Error: The process '.../cmdline-tools/16.0/bin/sdkmanager' failed with exit code 1
+          # 这里只保留 platform-tools；android-36 / build-tools / NDK 由后续步骤自行安装。
+          packages: 'platform-tools'
+
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses
+
+      # 清理 SDK 缓存里可能已损坏的 zip / 残留的 .lock 文件。
+      # GitHub Actions 的 Android Emulator 预置包偶发 "unknown archive" 报错
+      # 通常由下载中断、磁盘满或跨 job 复用损坏缓存导致，清理后即可恢复。
+      - name: Clean SDK cache
+        run: |
+          echo "==> Removing partial/corrupt SDK archives"
+          find "$ANDROID_HOME" -type d \( -name '.temp' -o -name '.download' \) -prune -exec rm -rf {} + 2>/dev/null || true
+          find "$ANDROID_HOME" -name '*.lock' -delete 2>/dev/null || true
+          find "$ANDROID_HOME" -name '*.zip' -mmin +60 -delete 2>/dev/null || true
+          echo "==> SDK cache cleaned"
+
+      # 带重试的 sdkmanager 包装：应对下载偶发损坏、网络抖动等 flaky 场景。
+      - name: Install Android 16 (API 36) platform & build-tools
+        run: |
+          for i in 1 2 3; do
+            echo "==> sdkmanager attempt $i"
+            if sdkmanager "platforms;android-36" "build-tools;36.0.0"; then
+              exit 0
+            fi
+            echo "::warning::attempt $i failed, cleaning cache and retrying"
+            find "$ANDROID_HOME" -type d \( -name '.temp' -o -name '.download' \) -prune -exec rm -rf {} + 2>/dev/null || true
+            find "$ANDROID_HOME" -name '*.lock' -delete 2>/dev/null || true
+            sleep 10
+          done
+          echo "::error::sdkmanager failed after 3 attempts"
+          exit 1
+
+      - name: Install NDK 26.1.10909125
+        run: |
+          for i in 1 2 3; do
+            echo "==> sdkmanager attempt $i"
+            if sdkmanager "ndk;26.1.10909125"; then
+              exit 0
+            fi
+            echo "::warning::attempt $i failed, cleaning cache and retrying"
+            find "$ANDROID_HOME" -type d \( -name '.temp' -o -name '.download' \) -prune -exec rm -rf {} + 2>/dev/null || true
+            find "$ANDROID_HOME" -name '*.lock' -delete 2>/dev/null || true
+            sleep 10
+          done
+          echo "::error::sdkmanager failed after 3 attempts"
+          exit 1
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # 秒级静态门：括号配平基线对照 + 注释/字面量闭合（嵌套感知）+ 坏味道审计。
+      # 先于测试/编译跑——注释未闭合这类词法错误会让编译器报
+      # Unclosed comment 加一串假的 Unresolved reference，一次误判就是几分钟编译白跑。
+      - name: Kotlin sanity check
+        run: python3 scripts/kotlin_sanity_check.py --all
+
+      # 架构硬门：依赖方向写死在 docs/AGENTS.md §2.2，此处强制。
+      # 放在编译前——违规是设计问题，不该等 3 分钟编译完才发现。
+      - name: Architecture check
+        run: python3 scripts/architecture_check.py
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Publish APK to pre-release (最新构建)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="latest-build"
+          APK=$(ls app/build/outputs/apk/debug/*.apk 2>/dev/null | head -1)
+          if [ -z "$APK" ]; then echo "未找到 APK，跳过发布"; exit 0; fi
+
+          # 1. 删除已存在的 release 与 tag 引用（忽略不存在的情况）
+          gh release delete "$TAG_NAME" --delete-tag --yes 2>/dev/null || true
+          git push origin ":refs/tags/$TAG_NAME" 2>/dev/null || true
+          sleep 10
+
+          # 2. 重建 tag 并强制推送
+          git tag -f "$TAG_NAME"
+          git push origin "refs/tags/$TAG_NAME" --force
+
+          # 3. 创建 release，带重试（应对 GitHub API 间歇性故障）
+          for i in 1 2 3; do
+            echo "尝试创建 release (第 $i 次)..."
+            if gh release create "$TAG_NAME" \
+              --title "最新构建（预发布）" \
+              --prerelease \
+              "$APK" 2>&1; then
+              echo "发布成功"
+              exit 0
+            fi
+            echo "发布失败，$i/3 次尝试，等待 10 秒后重试..."
+            sleep 10
+          done
+          echo "::warning::发布失败，已达最大重试次数"
+
+      - name: Publish to agent-toolbox (kotlin 最新构建)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "TARGET_REPO_TOKEN 未设置，跳过发布到 agent-toolbox"; exit 0; fi
+          TARGET_REPO="Aasdqwe1/agent-toolbox"
+          TAG_NAME="kotlin-latest-build"
+
+          # 1. 删除旧的 release（保留 tag，由后续强制推送覆盖）
+          gh release delete "$TAG_NAME" --yes -R "$TARGET_REPO" 2>/dev/null || true
+          sleep 10
+
+          # 2. 将 tag 移到当前 HEAD 并强制推送到目标仓库
+          git tag -f "$TAG_NAME"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${TARGET_REPO}.git" "refs/tags/$TAG_NAME" --force 2>/dev/null || true
+
+          # 3. 创建 release，带重试（应对 GitHub API 间歇性故障）
+          for i in 1 2 3; do
+            echo "尝试创建 release 到 $TARGET_REPO (第 $i 次)..."
+            if gh release create "$TAG_NAME" \
+              --repo "$TARGET_REPO" \
+              --title "kotlin 最新构建" \
+              --prerelease \
+              app/build/outputs/apk/debug/app-debug.apk 2>&1; then
+              echo "发布成功"
+              exit 0
+            fi
+            echo "发布失败，$i/3 次尝试，等待 10 秒后重试..."
+            sleep 10
+          done
+          echo "::warning::发布到 agent-toolbox 失败，已达最大重试次数"

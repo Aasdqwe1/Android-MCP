@@ -1,0 +1,3 @@
+# sysinfo.py 用 python3 解释器；随包 rootfs 是 Debian minbase，不含 python3。
+# 纯 bash 技能可以不放这个文件。
+python3

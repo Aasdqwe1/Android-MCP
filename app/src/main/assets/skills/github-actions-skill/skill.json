@@ -1,0 +1,32 @@
+{
+  "name": "github-actions",
+  "description": "获取 GitHub Actions 工作流运行状态和执行日志",
+  "version": "1.0.0",
+  "author": "MCP Agent",
+  "scripts": [
+    {
+      "name": "status",
+      "description": "查看指定仓库的最新工作流运行状态",
+      "entry": "scripts/status.py",
+      "interpreter": "python3",
+      "params": [
+        {"name": "owner", "type": "string", "description": "仓库所有者", "required": true},
+        {"name": "repo", "type": "string", "description": "仓库名称", "required": true},
+        {"name": "token", "type": "string", "description": "GitHub Personal Access Token", "required": true},
+        {"name": "limit", "type": "integer", "description": "列出最近多少次运行，默认 5", "required": false}
+      ]
+    },
+    {
+      "name": "logs",
+      "description": "获取指定工作流运行的日志",
+      "entry": "scripts/logs.py",
+      "interpreter": "python3",
+      "params": [
+        {"name": "owner", "type": "string", "description": "仓库所有者", "required": true},
+        {"name": "repo", "type": "string", "description": "仓库名称", "required": true},
+        {"name": "token", "type": "string", "description": "GitHub Personal Access Token", "required": true},
+        {"name": "run_id", "type": "string", "description": "工作流运行ID", "required": true}
+      ]
+    }
+  ]
+}

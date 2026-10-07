@@ -1,0 +1,243 @@
+<resources>
+    <string name="app_name">mcp</string>
+
+    <!-- 会话页：DeepSeek 客户端外壳 -->
+
+    <string name="session_login_title">登录 DeepSeek</string>
+    <string name="session_hint_mobile">手机号</string>
+    <string name="session_hint_password">密码</string>
+    <string name="session_hint_device_id">device_id（选填，风控兜底）</string>
+    <string name="session_device_id_help">留空则用本地生成（可能被风控拒绝）；可填抓包得到的真实 device_id。</string>
+    <string name="session_btn_login">登录 / 获取 Token</string>
+    <string name="session_status_not_logged">未登录，请先登录以获取会话 Token</string>
+    <string name="session_status_logging_in">登录中…</string>
+    <string name="session_login_fail">登录失败：%1$s</string>
+    <string name="session_login_risk">登录被风控拦截（RISK_DEVICE_DETECTED）。请在 device_id 输入框填入抓包得到的真实值后重试。</string>
+    <string name="session_list_empty">暂无会话，点右下角 + 新建</string>
+    <string name="session_loading">加载中…</string>
+    <string name="session_new_chat">新建会话</string>
+    <string name="session_window_title_default">新会话</string>
+    <string name="session_window_placeholder">开始对话吧～\n输入消息并发送，将自动完成 PoW 并流式接收回复。</string>
+    <string name="session_input_hint">输入消息…</string>
+    <string name="session_btn_send">发送</string>
+    <string name="session_toggle_think">深度思考</string>
+    <string name="session_toggle_search">联网搜索</string>
+    <string name="session_pow_status">算力校验中… %1$d%%</string>
+    <string name="session_back">返回</string>
+    <string name="session_new_chat_desc">新建会话</string>
+    <string name="session_refresh_desc">刷新会话列表</string>
+    <string name="session_browser_desc">内嵌浏览器</string>
+    <string name="session_time_unknown">时间未知</string>
+
+    <!-- 日志页：全局日志总线视图 -->
+    <string name="log_title">日志</string>
+    <string name="log_clear">清空</string>
+    <string name="log_empty">暂无日志</string>
+    <string name="log_autoscroll">自动滚动</string>
+    <string name="log_copy_all">复制全部</string>
+    <string name="log_copied">已复制 %1$d 条日志</string>
+    <string name="log_copy_empty">暂无可复制的日志</string>
+
+    <!-- 设置页：网页版聊天 -->
+    <string name="settings_web_chat_title">使用网页版聊天</string>
+    <string name="settings_web_chat_on">网页版</string>
+    <string name="settings_web_chat_off">原生</string>
+
+    <!-- 设置页：Tab 与外观主题 -->
+    <string name="settings_tab_theme">主题设置</string>
+    <string name="settings_tab_app">软件设置</string>
+    <string name="settings_theme_title">外观主题</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_reset">重置设置</string>
+
+    <!-- 推进模式 -->
+    <string name="push_mode_title">待办注入</string>
+    <string name="push_mode_summary">开启后自动将待办任务推送给 LLM 处理</string>
+    <string name="push_mode_on">推进模式已开启</string>
+    <string name="push_mode_off">推进模式已关闭</string>
+    <string name="push_now">推进处理</string>
+    <string name="push_task_count">待推进 %1$d 个任务</string>
+    <string name="push_none">暂无待处理任务</string>
+    <string name="push_sent">已推送 %1$d 个任务到聊天，等待 LLM 处理…</string>
+
+    <!-- 多 Agent 设置 -->
+    <string name="agent_settings_title">子 Agent 设置</string>
+    <string name="agent_max_rounds">最大续聊轮数</string>
+    <string name="agent_max_rounds_desc">子 Agent 自动续聊的最大轮数</string>
+    <string name="agent_timeout">超时时间（秒）</string>
+    <string name="agent_timeout_desc">子 Agent 单次任务超时时间</string>
+    <string name="agent_parallel_title">Agent 并行</string>
+    <string name="agent_parallel_summary">开启后多个子 Agent 任务并发执行（更快）；关闭则同一时刻只执行第一个，其余回报开关状态并跳过</string>
+
+    <!-- 根证书 / 网络安全 -->
+    <string name="settings_cert_title">根证书 (CA)</string>
+    <string name="settings_trust_all_title">信任所有证书（跳过校验）</string>
+    <string name="settings_trust_all_summary">开启后 app 信任任意 HTTPS 证书（含自签名/局域网），无需安装证书即可连后端；仅建议在可信网络使用</string>
+    <string name="settings_cert_hint">开启「信任所有证书」后，app 信任任意 HTTPS 证书（自签名 / 局域网 / 过期均放行），开箱即连后端，无需任何证书操作。</string>
+    <string name="session_generating">生成中…</string>
+    <string name="settings_prout_title">Debian 执行环境</string>
+    <string name="settings_prout_status">状态：未安装</string>
+    <string name="settings_prout_install">安装 Debian 执行环境</string>
+    <string name="settings_prout_hint">完整 Debian Linux 用户态（bash/apt）。已 Root 且开启下方「root 模式」时，run_bash 以原生 chroot 零损耗运行；未 Root 时退回 PRoot 沙箱。首次工具调用会自动解压。安装与运行日志见日志页（PROOT 标签）。</string>
+    <string name="settings_prout_root">原生 chroot（root 模式，需物理机已 root，使用系统 su）</string>
+    <string name="settings_llm_backend">LLM 后端</string>
+    <string name="settings_backend_openai">OpenAI 兼容</string>
+    <string name="settings_backend_webauto">Web 自动化</string>
+        <string name="settings_backend_litert">本地模型</string>
+    <string name="settings_backend_mnn">MNN 本地</string>
+    <string name="settings_local_engine">推理引擎</string>
+    <string name="settings_local_engine_litert">LiteRT (.litertlm)</string>
+    <string name="settings_local_engine_mnn">MNN (.mnn)</string>
+    <string name="settings_mnn_model_dir">模型目录</string>
+    <string name="settings_mnn_model_hint">含 config.json 的 .mnn 模型目录绝对路径（留空表示未配置）</string>
+    <string name="settings_mnn_threads">推理线程数</string>
+    <string name="settings_mnn_max_output">单轮最大生成（token）</string>
+    <string name="setup_backend_mnn">MNN 本地模型</string>
+    <string name="setup_backend_mnn_desc">阿里 MNN-LLM 引擎，.mnn 格式模型，离线推理</string>
+        <string name="settings_litert_model">模型文件</string>
+        <string name="settings_litert_model_hint">.litertlm 模型路径（留空表示未导入）</string>
+        <string name="settings_litert_backend">算力档位</string>
+        <string name="settings_litert_temp">采样温度</string>
+    <string name="settings_litert_max_tokens">上下文窗口（token）</string>
+    <string name="settings_tool_dedup">工具调用去重</string>
+    <string name="settings_protocol_style">工具调用协议风格</string>
+    <string name="settings_protocol_follow">跟随预设</string>
+    <string name="settings_protocol_line">行式</string>
+    <string name="settings_protocol_xml">XML</string>
+    <string name="settings_protocol_hint">仅对 DeepSeek 逆向 / Web 自动化后端生效（它们用文本协议）。OpenAI 兼容与本地模型走原生 function calling，不受影响。极简模式锁定 XML，本设置对它无效。</string>
+    <string name="settings_tool_dedup_hint">同一个 tool_call id 只执行一次，防止模型复读上一次调用导致重复执行或死循环。若后端生成的 id 不唯一（如本地模型），去重会误杀合法调用，此时可关闭。</string>
+        <string name="settings_litert_import">导入模型文件</string>
+        <string name="settings_litert_test">测试加载</string>
+        <string name="setup_backend_litert">本地模型（LiteRT）</string>
+        <string name="setup_backend_litert_desc">模型完全离线运行在设备上，不联网、数据不出设备。需先导入 .litertlm 模型文件。支持 CPU / GPU / NPU 加速。</string>
+    <string name="settings_webauto_site">站点</string>
+    <string name="settings_webauto_url">站点地址</string>
+    <string name="settings_webauto_newchat">新建对话按钮（选择器）</string>
+    <string name="settings_webauto_input">输入框（选择器，必填）</string>
+    <string name="settings_webauto_send">发送按钮（选择器，留空用回车）</string>
+    <string name="settings_webauto_thinking">思考区（选择器，站点单独渲染思考时配置）</string>
+    <string name="settings_webauto_content">正文（选择器，必填）</string>
+    <string name="settings_webauto_stop">停止按钮（选择器）</string>
+    <string name="settings_webauto_session">会话列表（选择器）</string>
+    <string name="settings_webauto_enter">用回车发送</string>
+    <string name="settings_webauto_desktop">桌面模式（全局 UA：内嵌浏览器与自动化会话都用桌面 UA）</string>
+    <string name="settings_webauto_help">选择器为 CSS 语法，如 textarea、#prompt-textarea、[data-testid=send-button]。可在浏览器页打开站点后用 browser_snapshot 查看真实元素。「会话列表」选择器用于读取网页上的会话列表（会话页以网页为准，建议填写容器选择器）。</string>
+    <string name="settings_webauto_hint">驱动网页版 AI 对话框。需先在浏览器页登录该站点；不支持工具调用。</string>
+    <string name="settings_webauto_profile_usage">单击配置即切换为当前使用；长按展开编辑；左右滑动删除。每个配置保存一套站点地址与选择器，切换后立即生效。</string>
+    <string name="settings_webauto_add_profile">新建配置</string>
+    <string name="settings_webauto_new_profile_title">新建 Web 自动化配置</string>
+    <string name="settings_webauto_new_profile_hint">配置名（如 智谱清言）</string>
+    <string name="settings_webauto_delete_confirm">删除配置「%1$s」？</string>
+    <string name="settings_openai_profiles">OpenAI 配置档案</string>
+    <string name="settings_add_profile">添加配置</string>
+    <string name="settings_clear_openai_sessions">清空 OpenAI 本地会话</string>
+    <string name="settings_audio_title">语音（转写 / 文字转语音）</string>
+    <string name="settings_audio_hint">部分 OpenAI 兼容服务未实现 /audio/transcriptions 或 /audio/speech 端点。可在此分别关闭，或换成自定义端点。端点 URL 留空则自动从上方 Base URL 推导；API Key 留空则沿用上方 API Key；模型留空则用默认（转写 whisper-1、合成 tts-1）。</string>
+    <string name="settings_audio_transcribe">语音转写（语音输入）</string>
+    <string name="settings_audio_transcribe_url">转写端点 URL（留空则用 Base URL + /audio/transcriptions）</string>
+    <string name="settings_audio_transcribe_api_key">转写 API Key（可留空沿用上方 API Key）</string>
+    <string name="settings_audio_transcribe_model">转写模型（默认 whisper-1）</string>
+    <string name="settings_audio_tts">文字转语音（气泡朗读）</string>
+    <string name="settings_audio_use_system_tts">使用系统文字转语音输出（离线，不调 /audio/speech 端点）</string>
+    <string name="settings_audio_tts_url">合成端点 URL（留空则用 Base URL + /audio/speech）</string>
+    <string name="settings_audio_tts_api_key">合成 API Key（可留空沿用上方 API Key）</string>
+    <string name="settings_audio_tts_model">合成模型（默认 tts-1）</string>
+    <string name="settings_rate_limit">限流重试</string>
+    <string name="settings_retry_max">最大重试次数</string>
+    <string name="settings_retry_interval">重试间隔（秒）</string>
+    <string name="settings_task_interval">任务执行间隔（秒）</string>
+    <string name="settings_agent_title">子 Agent 设置</string>
+    <string name="settings_agent_parallel">Agent 并行</string>
+    <string name="settings_agent_parallel_summary">开启后多个子 Agent 任务并发执行（更快）；关闭则同一时刻只执行第一个，其余回报开关状态并跳过</string>
+    <string name="settings_backup_title">配置导入导出</string>
+    <string name="settings_backup_hint">把全部配置（含 API key / token，明文 JSON）导出到 Download 目录，或从文件导入覆盖。可跨设备迁移。</string>
+    <string name="settings_backup_export">导出到 Download</string>
+    <string name="settings_backup_import">从文件导入</string>
+    <string name="settings_wechat_title">微信连接 (OpenClaw Weixin)</string>
+    <string name="settings_wechat_status">原生直连：未登录账号\nDebian PRoot 官方插件：未检测</string>
+    <string name="settings_wechat_page_size">引导每页会话数（1 ~ 10）</string>
+    <string name="settings_wechat_qr">扫码登录（原生直连）</string>
+    <string name="settings_wechat_step1">① 安装 PRoot Debian 官方插件（Node.js + @tencent-weixin/openclaw-weixin）</string>
+    <string name="settings_wechat_step2">② 扫码登录（Debian PRoot 官方插件）</string>
+    <string name="settings_wechat_step3">③ 启动 Gateway 并后台运行</string>
+    <string name="settings_wechat_restart">重启 Gateway（配置变更后用）</string>
+    <string name="settings_wechat_dm_scope">多账号会话隔离 (per-account-channel-peer)</string>
+    <string name="settings_wechat_loop_status">轮询状态：未启动（没有登录的微信账号）</string>
+    <string name="settings_wechat_loop_start">启动轮询（收消息）</string>
+    <string name="settings_wechat_loop_stop">停止轮询</string>
+    <string name="settings_wechat_clear_accounts">清空已登录账号</string>
+    <string name="settings_server_port">允许外部其他设备访问服务</string>
+    <string name="settings_api_forward_title">API 转发（/v1）</string>
+    <string name="settings_api_forward_desc">允许外部客户端以 OpenAI 兼容方式调用本机对话能力。\n\n⚠️ 安全提示：鉴权沿用 MCP 的 Bearer token；若那边没配 token，局域网内任何设备都能无鉴权调用本机后端并消耗你的额度。\n\n⚠️ 能力边界：思考开关可由客户端的 reasoning_effort 控制（none=关闭，其他=开启），但本机后端没有推理强度档位，只能开关；temperature / max_tokens 对当前后端不生效。</string>
+    <string name="settings_api_forward_session_title">默认对话分组</string>
+    <string name="settings_api_forward_session_none">未指定（按请求内容自动分组）</string>
+    <string name="settings_api_forward_session_pick">选择</string>
+    <string name="mcp_trust_self_signed">信任自签名证书（自托管/内网服务器常见，仅对本服务器生效）</string>
+    <string name="settings_server_https">启用 HTTPS</string>
+    <string name="settings_server_https_desc">自签名证书（浏览器会提示不受信任，需手动信任或选择继续访问）。HTTP 与 HTTPS 不能同时监听同一端口。</string>
+    <string name="settings_server_https_regen">重新生成证书</string>
+    <string name="settings_server_port_hint">端口（默认 8693）</string>
+    <string name="settings_server_section_title">Web 访问</string>
+    <string name="settings_server_start">启动服务器</string>
+    <string name="settings_server_stop">停止服务器</string>
+    <string name="settings_wechat_hint">两条路径二选一或同时使用：原生直连适合轻量收发、无需常驻进程；官方插件支持完整频道路由、配对访问控制。详细见 README「微信连接」章节。文档入口：https://docs.openclaw.ai/zh-CN/channels/wechat ，源码：https://github.com/Tencent/openclaw-weixin</string>
+
+    <!-- 首次运行初始化向导 -->
+    <string name="setup_title">初始化</string>
+    <string name="setup_step_indicator">第 %1$d 步 / 共 %2$d 步</string>
+    <string name="setup_step1_title">选择 LLM 后端</string>
+    <string name="setup_step1_desc">决定用哪套协议对话。随时可在「设置 → LLM 后端」里改。</string>
+    <string name="setup_backend_openai">OpenAI 兼容协议</string>
+    <string name="setup_backend_webauto">Web 自动化</string>
+    <string name="setup_backend_webauto_desc">驱动网页版 AI 对话框（如 DeepSeek/ChatGPT 网页版）。需先在浏览器页登录该站点；网页版不支持工具调用。</string>
+    <string name="setup_backend_openai_desc">填好 Base URL + API Key 即可用，不需要任何 DeepSeek 账号。兼容 OpenAI / Azure / Ollama / vLLM / LM Studio / OpenRouter 等。</string>
+    <string name="setup_step2_title">配置模型凭据</string>
+    <string name="setup_base_url">Base URL</string>
+    <string name="setup_api_key">API Key（本地服务如 Ollama 可留空）</string>
+    <string name="setup_model">模型名</string>
+    <string name="setup_test">测试连接</string>
+    <string name="setup_testing">正在测试连接…</string>
+    <string name="setup_step3_title">授予运行权限</string>
+    <string name="setup_step3_desc">缺权限只影响对应工具，不影响对话本身；可稍后在系统设置里补授。</string>
+    <string name="setup_proot_title">准备 Linux 环境</string>
+    <string name="setup_proot_desc">工具执行需要完整的 Debian Linux 环境（PRoot）。现在起在后台解压安装，完成后 run_bash 与技能脚本才可用。\n\n可以点「下一步」先跳过：安装会在后台继续跑完，也可稍后在「设置 → PRoot Debian 环境」里手动安装。</string>
+    <string name="setup_proot_running">正在解压 PRoot Debian 环境…</string>
+    <string name="setup_proot_done">PRoot Debian 环境已就绪</string>
+    <string name="setup_proot_skipped">尚未安装（稍后可在设置页安装）</string>
+    <string name="setup_proot_failed">安装失败：%1$s（可稍后在设置页重试）</string>
+    <string name="setup_step4_title">完成初始化</string>
+    <string name="setup_step4_desc">确认下面的配置，点「完成并进入」开始使用。之后可在「设置 → 重新初始化」里再走一遍。</string>
+    <string name="setup_perm_overlay">悬浮窗权限（显示在其他应用上层）</string>
+    <string name="setup_perm_all_files">全部文件访问</string>
+    <string name="setup_perm_record">录音</string>
+    <string name="setup_perm_media">照片和视频</string>
+    <string name="setup_granted">已授予</string>
+    <string name="setup_not_granted">未授予，点此授予</string>
+    <string name="setup_summary_backend">后端：%1$s</string>
+    <string name="setup_summary_model">模型：%1$s</string>
+    <string name="setup_summary_perm">权限：%1$s</string>
+    <string name="setup_summary_perm_none">未授予（不影响对话，工具可能失败）</string>
+    <string name="setup_back">上一步</string>
+    <string name="setup_next">下一步</string>
+    <string name="setup_finish">完成并进入</string>
+    <string name="setup_continue_title">尚未完成配置</string>
+    <string name="setup_continue_ok">仍然继续</string>
+    <string name="setup_continue_cancel">返回配置</string>
+    <string name="setup_warn_no_base_url">还没有填写 Base URL，OpenAI 兼容后端发不出请求。</string>
+    <string name="setup_reopen">重新初始化（重走配置向导）</string>
+
+    <!-- 浏览器浮窗：长按会话窗口标题栏右侧的浏览器入口弹出，可拖拽/吸附边缘 -->
+    <string name="float_browser_title">浏览器</string>
+    <string name="browser_menu_automation">自动化窗口（模型正在操作）</string>
+    <string name="float_automation_title">Web 自动化</string>
+    <string name="float_browser_expand">回到全屏浏览器</string>
+    <string name="float_browser_close">关闭小窗</string>
+    <string name="float_browser_minimize">缩小为悬浮球</string>
+    <string name="float_browser_resize">拖动调整大小</string>
+    <string name="float_browser_open_tip">已弹出浏览器小窗：拖顶部把手可移动，右上角可回全屏 / 关闭</string>
+    <string name="float_browser_perm_title">开启悬浮窗权限</string>
+    <string name="float_browser_perm_go">去开启</string>
+    <string name="float_browser_perm_later">先用小窗</string>
+</resources>

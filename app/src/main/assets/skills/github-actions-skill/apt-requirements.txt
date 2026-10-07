@@ -1,0 +1,2 @@
+# 需要 Python 解释器（rootfs 未预装 python3）。脚本本身只用标准库，无需 pip 依赖。
+python3

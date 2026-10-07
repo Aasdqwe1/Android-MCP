@@ -1,0 +1,3 @@
+# git 技能的系统依赖（随包 rootfs 是 Debian minbase，不含 git）。
+# 每行一个 apt 包名；由 SkillManager.installSkillDependencies 在 PRoot 就绪后幂等安装。
+git

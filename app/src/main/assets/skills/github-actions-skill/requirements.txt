@@ -1,0 +1,7 @@
+# 依赖声明：由 SkillManager.installSkillDependencies 在 PRoot 就绪后幂等安装。
+#
+# 绑定的两个工具（scripts/status.py、scripts/logs.py）只用标准库 urllib + zipfile。
+# 但技能内随附的辅助库 github_actions.py（GitHubActionsClient / parse_logs /
+# format_status_report 等，供 run_bash 手工调用）import requests —— 声明必须覆盖
+# 技能里所有可执行代码的依赖，所以这里声明 requests。
+requests>=2.31.0

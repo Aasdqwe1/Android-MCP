@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ═══════════ 对话框统一规格 ═══════════
+         弹窗的边距 / 字号 / 行高集中在这里，改一处即可全局生效。
+         新增弹窗请复用这些常量，不要在各自布局里写散装数值。 -->
+
+    <!-- 内容区左右内边距。与上下内边距成对使用，四边同值才是「一致留白」 -->
+    <dimen name="dialog_padding_horizontal">24dp</dimen>
+    <!-- 内容区上下内边距 -->
+    <!--
+          内容区上下内边距。刻意取与 horizontal 相同的 24dp，让弹窗内容四边留白一致。
+    
+          此前是 8dp：标题紧贴弹窗顶部、左侧却空着 24dp，同一块内容四周不对称，观感失衡。
+          四类弹窗（confirm / prompt / list / form）共用这一对 dimen —— dialog_list.xml 的
+          标题下边距、列表底部留白也走它 —— 改一处全局生效，不要在各自布局里另写数值。
+    
+          注意 prompt / form 走的是 MaterialAlertDialog 原生标题，标题自身另有 16dp 下边距，
+          因此这两个弹窗「标题 → 首个输入框」的间距会比 confirm 类更大一些，属预期。
+        -->
+        <dimen name="dialog_padding_vertical">24dp</dimen>
+
+    <!-- 标题：16sp 加粗，与列表项标题同规格 -->
+    <dimen name="dialog_title_size">16sp</dimen>
+    <!-- 正文：13sp，行距 2dp 提升长段落可读性 -->
+    <dimen name="dialog_message_size">13sp</dimen>
+    <dimen name="dialog_message_line_spacing">2dp</dimen>
+    <!-- 标题与正文的间距 -->
+    <dimen name="dialog_title_message_gap">6dp</dimen>
+
+    <!-- 选项行高：与 item_todo / item_skill 的点击热区同一量级 -->
+    <dimen name="dialog_choice_height">48dp</dimen>
+    <dimen name="dialog_choice_text_size">14sp</dimen>
+    <!-- 选项列表最大高度：超过就滚动，避免弹窗顶到状态栏 -->
+    <dimen name="dialog_choice_list_max_height">320dp</dimen>
+</resources>

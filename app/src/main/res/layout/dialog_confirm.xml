@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    标题 + 正文的通用内容视图（确认框 / 提示框共用）。
+
+    这里只管内容排版：对话框自身的圆角、背景、按钮区由
+    MaterialAlertDialogBuilder 负责，标题区不加额外标题栏 ——
+    用 setView 传内容时系统标题会是空的，肉眼看就是「标题在内容里」。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/dialog_padding_horizontal"
+    android:paddingTop="@dimen/dialog_padding_vertical"
+    android:paddingEnd="@dimen/dialog_padding_horizontal"
+    android:paddingBottom="@dimen/dialog_padding_vertical">
+
+    <TextView
+        android:id="@+id/tvConfirmTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/dialog_title_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvConfirmMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dialog_title_message_gap"
+        android:lineSpacingExtra="@dimen/dialog_message_line_spacing"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/dialog_message_size" />
+</LinearLayout>

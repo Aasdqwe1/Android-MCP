@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 浏览器浮窗：系统级悬浮窗（"显示在其他应用上层"，属特殊权限，需用户手动开启）。
+         未授权时浮窗自动降级为应用内小窗，功能不受影响，只是不能盖在其他 App 之上。 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 所有文件访问（Android 11+ 需用户授权） -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
+    <!-- 基础文件读写（Android 12 及以下，Android 13+ 已废弃但仍声明以兼容） -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- Android 13+ 细粒度媒体权限 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <!-- Android 14+：用户在「照片和视频」对话框里选「仅选择部分照片」时，系统只授予这一项。
+         不声明/不申请它，这类用户会被永远显示成「未授予」。 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
+    <!-- 语音输入：前端麦克风录音（语音转文字闭环） -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Android 11+ 包可见性：声明需发现系统 TTS 引擎，否则 TextToSpeech.onInit 返回 ERROR(-1) -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
+    <!-- LiteRT 模块 minSdk=26，本工程 minSdk=24：允许合并。
+             安全性：LiteRt 类仅在后端选 LITERT 时通过 lambda 懒加载，
+             24 设备不选该后端不会触碰相关类（LiteRtClient 内有 Build.VERSION 保护）。 -->
+        <uses-sdk tools:overrideLibrary="com.mcp.litert" />
+    
+        <application
+        android:allowBackup="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:hardwareAccelerated="true"
+        android:requestLegacyExternalStorage="true"
+        android:extractNativeLibs="true"
+        android:largeHeap="true"
+        android:theme="@style/Theme.AgentToolbox">
+    
+            <!-- LiteRT GPU 后端所需：OpenCL 与 vndksupport 由系统提供，required=false 避免老设备安装失败 -->
+            <uses-native-library android:name="libvndksupport.so" android:required="false" />
+            <uses-native-library android:name="libOpenCL.so" android:required="false" />
+
+        <!-- 首次运行初始化向导：安装后的启动页。已完成初始化时自行跳转到 MainActivity。 -->
+        <activity
+            android:name=".SetupActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 主界面：仅由本应用内部启动，不再对外导出 -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize" />
+    </application>
+
+</manifest>
