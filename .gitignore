@@ -32,6 +32,7 @@
 *.ipr
 *.iws
 *.jar
+!gradle/wrapper/gradle-wrapper.jar          # Gradle Wrapper 入口（CI 必需，放在 *.jar 之后才能生效）
 *.jks
 *.keystore
 *.lock
